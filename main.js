@@ -46,7 +46,7 @@ function traverseLine(matrix, line_num, callback) {
     }
 }
 
-function goToDirection(matrix, x, y, direction, stop_at, callback) {
+function goToDirection(matrix, x, y, direction, stop_at, max_count, callback) {
     var x_offset = 0
     var y_offset = 0
 
@@ -70,14 +70,22 @@ function goToDirection(matrix, x, y, direction, stop_at, callback) {
             break
     }
 
+    if(max_count <= 0) {
+        max_count = matrix.length
+    }
+
     var stop_flag = false
     x += x_offset
     y += y_offset
-    while(x < matrix.length && x >= 0 && y < matrix.length && y >= 0 && stop_at.indexOf(matrix[x][y]) < 0 && !stop_flag) {
+    var result_count = 0
+    while(x < matrix.length && x >= 0 && y < matrix.length && y >= 0 && stop_at.indexOf(matrix[x][y]) < 0 && !stop_flag && result_count < max_count) {
         stop_flag = callback(matrix[x][y], x, y, matrix)
         x += x_offset
         y += y_offset
+        result_count += 1
     }
+
+    return result_count
 }
 
 function result(value) {
@@ -88,18 +96,61 @@ function processData(input) {
     var matrix = countAndMatrix(input, (value) => {
         return value
     })
+    var radix = -1
+    var current_radix = -1
     traverseMatrix(matrix, (item, x, y, matrix) => {
+        var r_radix = -1
+        var u_radix = -1
         if(item === '.') {
-            var r_count = 0
-            goToDirection(matrix, x, y, 'right', ['*'], (item, x, y, matrix) => {
-                var result = item === '*';
-                if(!result)
-                    r_count += 1
-                return result
+            var r_count = 0, l_count = 0, u_count = 0, d_count = 0
+            // r_count = goToDirection(matrix, x, y, 'right', ['*'], (item, x, y, matrix) => {
+            //     return false
+            // })
+            // l_count = goToDirection(matrix, x, y, 'left', ['*'], (item, x, y, matrix) => {
+            //     return false
+            // })
+            // u_count = goToDirection(matrix, x, y, 'up', ['*'], (item, x, y, matrix) => {
+            //     return false
+            // })
+            // d_count = goToDirection(matrix, x, y, 'down', ['*'], (item, x, y, matrix) => {
+            //     return false
+            // })
+            // if((r_count === l_count && r_count === u_count && r_count === d_count)) {
+            //     if(r_count > r_radix) {
+            //         r_radix = r_count
+            //     }
+            // }
+
+            r_count = 0, l_count = 0, u_count = 0, d_count = 0
+            u_count = goToDirection(matrix, x, y, 'up', ['*'], -1, (item, row, col, matrix) => {
+                //console.log(x, y, row, col)
+                return false
             })
-            console.log(r_count)
+            //console.log(u_count)
+            d_count = goToDirection(matrix, x, y, 'down', ['*'], u_count, (item, x, y, matrix) => {
+                return false
+            })
+            //console.log(d_count)
+            r_count = goToDirection(matrix, x, y, 'right', ['*'], u_count, (item, x, y, matrix) => {
+                return false
+            })
+            //console.log(r_count)
+            l_count = goToDirection(matrix, x, y, 'left', ['*'], u_count, (item, x, y, matrix) => {
+                return false
+            })
+            //console.log(l_count)
+
+            if((u_count === l_count && u_count === r_count && u_count === d_count)) {
+                if(u_count > u_radix) {
+                    u_radix = u_count
+                }
+            }
+            current_radix = u_radix > r_radix ? u_radix:r_radix
+            if(current_radix > radix)
+                radix = current_radix
         }
     })
+    console.log(radix)
 }
 
 // process.stdin.resume();
