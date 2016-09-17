@@ -46,6 +46,12 @@ function traverseLine(matrix, line_num, callback) {
     }
 }
 
+function traverseArray(array, size, callback) {
+    for(var i = 0; i < size; i++) {
+        callback(array[i], i, array)
+    }
+}
+
 function goToDirection(matrix, x, y, direction, stop_at, max_count, callback) {
     var x_offset = 0
     var y_offset = 0
@@ -92,65 +98,36 @@ function result(value) {
     console.log(value)
 }
 
+function convertToarray(line) {
+    return line.split(' ')
+}
+
 function processData(input) {
-    var matrix = countAndMatrix(input, (value) => {
-        return value
-    })
-    var radix = -1
-    var current_radix = -1
-    traverseMatrix(matrix, (item, x, y, matrix) => {
-        var r_radix = -1
-        var u_radix = -1
-        if(item === '.') {
-            var r_count = 0, l_count = 0, u_count = 0, d_count = 0
-            // r_count = goToDirection(matrix, x, y, 'right', ['*'], (item, x, y, matrix) => {
-            //     return false
-            // })
-            // l_count = goToDirection(matrix, x, y, 'left', ['*'], (item, x, y, matrix) => {
-            //     return false
-            // })
-            // u_count = goToDirection(matrix, x, y, 'up', ['*'], (item, x, y, matrix) => {
-            //     return false
-            // })
-            // d_count = goToDirection(matrix, x, y, 'down', ['*'], (item, x, y, matrix) => {
-            //     return false
-            // })
-            // if((r_count === l_count && r_count === u_count && r_count === d_count)) {
-            //     if(r_count > r_radix) {
-            //         r_radix = r_count
-            //     }
-            // }
+    var lines = splitLines(input)
+    var n = parseInt(lines[0])
+    var array1 = convertToarray(lines[1])
+    var array2 = convertToarray(lines[2])
+    var min_idx = n + 1
+    var res = 2001
+    traverseArray(array1, n, (it1, idx1) => {
+        traverseArray(array2,n ,(it2, idx2) => {
+            if(it2 === it1) {
+                var temp = Math.abs(idx2 - idx1)
+                if(temp <= min_idx) {
+                    if(min_idx == temp) {
+                        if(it1 < res) {
+                            res = it1
+                        }
+                    } else  {
+                        min_idx = temp
+                        res = it1
+                    }
 
-            r_count = 0, l_count = 0, u_count = 0, d_count = 0
-            u_count = goToDirection(matrix, x, y, 'up', ['*'], -1, (item, row, col, matrix) => {
-                //console.log(x, y, row, col)
-                return false
-            })
-            //console.log(u_count)
-            d_count = goToDirection(matrix, x, y, 'down', ['*'], u_count, (item, x, y, matrix) => {
-                return false
-            })
-            //console.log(d_count)
-            r_count = goToDirection(matrix, x, y, 'right', ['*'], u_count, (item, x, y, matrix) => {
-                return false
-            })
-            //console.log(r_count)
-            l_count = goToDirection(matrix, x, y, 'left', ['*'], u_count, (item, x, y, matrix) => {
-                return false
-            })
-            //console.log(l_count)
-
-            if((u_count === l_count && u_count === r_count && u_count === d_count)) {
-                if(u_count > u_radix) {
-                    u_radix = u_count
                 }
             }
-            current_radix = u_radix > r_radix ? u_radix:r_radix
-            if(current_radix > radix)
-                radix = current_radix
-        }
+        })
     })
-    console.log(radix)
+    console.log(res)
 }
 
 // process.stdin.resume();
