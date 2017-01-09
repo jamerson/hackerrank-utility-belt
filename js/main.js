@@ -19,6 +19,7 @@ function countAndLines(input, callback) {
     }
 }
 
+//Creates a NxN matrix and call a function for each element before saving it to the array
 function countAndMatrix(input, callback) {
     var lines = splitLines(input)
     var array_size = parseInt(lines[0])
@@ -94,9 +95,6 @@ function goToDirection(matrix, x, y, direction, stop_at, max_count, callback) {
     return result_count
 }
 
-function result(value) {
-    console.log(value)
-}
 
 function convertToarray(line) {
     return line.split(' ')
