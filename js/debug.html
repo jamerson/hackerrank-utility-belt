@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+  </head>
+  <body>
+    <textarea id="input" rows="4" cols="50"></textarea><br>
+    <input id="clickMe" type="button" value="Run" onclick="doFunction();" />
+  <script type="text/javascript">
+
+//// MAIN FUNCTIONS ////
+let corrects = []
+
+function isCorrect(word) {
+    //console.log(corrects, word.toLowerCase(), corrects.indexOf(word.toLowerCase()))
+    return corrects.indexOf(word.toLowerCase()) >= 0
+}
+
+function isAlpha(char) {
+    return ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'].indexOf(char.toLowerCase()) >= 0
+}
+
+function clearWord(word) {
+    for(let i = 0; i < word.length; i++) {
+        if(!isAlpha(word[i])) {
+            word = word.replace(word[i],'')
+        }
+    }
+    return word.trim()
+}
+
+function processData(input) {
+    let lines = input.split('\n')
+    let s = lines[0]
+    let k = parseInt(lines[1])
+    let output = []
+    for(let i = 0; i < k; i++) {
+        corrects.push(lines[i+2].toLowerCase())
+    }
+    //console.log(corrects)
+    let words = s.split(' ')
+    let count = 0
+    let found = false
+    for(let i = 0; i < words.length; i++) {
+        let w = clearWord(words[i])
+        if(isCorrect(w)) {
+            count += 1
+            output.push(w)
+
+        } else{
+            count = 0
+            output = []
+        }
+        //console.log(output, count, k)
+        if(count === k) {
+            console.log(output.join(' '))
+            return
+        }
+    }
+    if(!found) {
+        console.log("NO SUBSEGMENT FOUND")
+    }
+}
+
+   function autorun() {
+
+   }
+
+   function doFunction()
+   {
+     let input = document.getElementById('input').value;
+     processData(input)
+   }
+
+   if (document.addEventListener) document.addEventListener("DOMContentLoaded", autorun, false);
+   else if (document.attachEvent) document.attachEvent("onreadystatechange", autorun);
+   else window.onload = autorun;
+  </script>
+  </body>
+</html>

@@ -67,9 +67,43 @@ function someSort(input) {
 console.log(someSort([2,1]))
 console.log(someSort([3,2,1]))
 
-function partition(input, start, end)
-function quickSort(input) {
-  //partitionh
-  //quickSort left
-  //quickSort right
+function swap(input, start, end) {
+  console.log("swap",input[start], input[end],start, end)
+  let temp = input[start]
+  input[start] = input[end]
+  input[end] = temp
 }
+
+function partition(input, start, end) {
+  let pivot = input[(start + end)/2]
+  console.log("pivot",(start + end)/2, input[(start + end)/2])
+  while(start <= end) {
+    while(input[start] < pivot) start++
+    while(input[end] > pivot) end--
+
+    if(start <= end) {
+      swap(input, start, end)
+      start++
+      end--
+    }
+  }
+  console.log("partition returns", start)
+  return start
+}
+
+function quickSort(input, start = 0, end = input.length - 1) {
+  console.log("quickSort", input, start, end)
+  let index = partition(input, start, end)
+  if(start < index - 1)
+    quickSort(input, start, index- 1)
+  if(index <= end)
+    quickSort(input, index, end)
+}
+
+let input = [3,2,1]
+quickSort(input)
+console.log(input)
+
+// input = [4, 2, 6, 5, 3, 9]
+// quickSort(input)
+// console.log(input)
